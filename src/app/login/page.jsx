@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { authService } from "@/services/auth.service";
 import { scheduleRefresh } from "@/utils/helper";
 
 export default function LoginPage() {
@@ -13,26 +14,15 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-            credentials: "include",
-        });
         try {
-            const data = await res.json();
-            if (res.ok) {
-                localStorage.setItem("exp", data.exp);
-                scheduleRefresh();
-                router.push("/dashboard");
-            } else {
-                setError(data.message);
-            }
+            const data = await authService.login({ username, password });
+            localStorage.setItem("exp", data.exp);
+            scheduleRefresh();
+            router.push("/dashboard");
         } catch (err) {
-            console.error("Error parseando JSON:", err);
-            setError("Error en el servidor");
+            console.error("Error en login:", err);
+            setError(err.message || "Error en el servidor");
         }
-
     };
 
     return (
