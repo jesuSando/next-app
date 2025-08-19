@@ -1,5 +1,5 @@
-import "@/styles/button.module.css"
+import styles from "@/styles/button.module.css";
 
 export default function Button() {
-  return <button className="button">Click</button>;
+    return <button className={styles.button}>Click</button>;
 }
