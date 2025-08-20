@@ -8,8 +8,9 @@ import { authService } from "@/services/auth.service";
 import { scheduleRefresh } from "@/utils/helper";
 
 export default function LoginPage() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [error, setError] = useState("");
 
@@ -23,7 +24,7 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await authService.login({ username, password });
+            const data = await authService.login({ email, password, rememberMe });
             localStorage.setItem("exp", data.exp);
             scheduleRefresh();
             router.push("/dashboard");
@@ -84,8 +85,8 @@ export default function LoginPage() {
                                 id="email"
                                 type="email"
                                 placeholder="example@email.com"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="block w-full mb-4 p-2 border border-[var(--color-text)] rounded"
                             />
 
@@ -105,6 +106,8 @@ export default function LoginPage() {
                                 <input
                                     type="checkbox"
                                     className="form-checkbox h-3 w-3 text-[var(--color-primary)]"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
                                 />
                                 <span className="ml-2 text-[var(--color-muted-dark)]">Remember me</span>
                             </label>

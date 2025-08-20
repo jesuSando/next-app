@@ -5,9 +5,9 @@ import { serialize } from "cookie";
 import { db } from "@/lib/db";
 
 export async function POST(req) {
-    const { username, password, rememberMe } = await req.json();
+    const { email, password, rememberMe } = await req.json();
 
-    const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [username]);
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     const user = rows[0];
     if (!user) return NextResponse.json({ message: "Usuario no encontrado" }, { status: 401 });
 
@@ -26,7 +26,7 @@ export async function POST(req) {
         secure: process.env.NODE_ENV === "production",
         path: "/",
         sameSite: "lax",
-        ...(rememberMe ? { maxAge: 60 * 60 * 24 * 365 } : undefined), // si recordarme → persistente
+        ...(rememberMe ? { maxAge: 60 * 60 * 24 * 365 } : undefined),
     });
 
     const refreshCookie = serialize("refreshToken", refreshToken, {
