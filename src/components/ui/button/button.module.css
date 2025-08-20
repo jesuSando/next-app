@@ -1,0 +1,9 @@
+.button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    width: fit-content;
+}
+.button:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+}

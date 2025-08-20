@@ -1,17 +1,6 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 
-import Button from "@/components/button";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { outfit } from "@/fonts/fonts";
 
 export const metadata = {
   title: "Create Next App",
@@ -22,9 +11,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased p-6`}
+        className={`${outfit.className}`}
       >
-        <Button />
         {children}
       </body>
     </html>
