@@ -13,6 +13,7 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [error, setError] = useState("");
+    const [alert, setAlert] = useState("");
 
     const [registerUsername, setRegisterUsername] = useState("");
     const [registerEmail, setRegisterEmail] = useState("");
@@ -21,8 +22,22 @@ export default function LoginPage() {
 
     const router = useRouter();
 
+    // 🔹 Validación de email simple con regex
+    const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+
+        if (!email || !password) {
+            setError("Email y contraseña son obligatorios.");
+            return;
+        }
+        if (!isValidEmail(email)) {
+            setError("El email no tiene un formato válido.");
+            return;
+        }
+
         try {
             const data = await authService.login({ email, password, rememberMe });
             localStorage.setItem("exp", data.exp);
@@ -36,7 +51,37 @@ export default function LoginPage() {
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
-        console.log("Registrando:", { registerUsername, registerEmail, registerPassword });
+        setError("");
+
+        if (!registerUsername.trim()) {
+            setError("El nombre de usuario es obligatorio.");
+            return;
+        }
+        if (!registerEmail || !isValidEmail(registerEmail)) {
+            setError("Debes ingresar un email válido.");
+            return;
+        }
+        if (registerPassword.length < 6) {
+            setError("La contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+        if (registerPassword !== registerConfirmPassword) {
+            setError("Las contraseñas no coinciden.");
+            return;
+        }
+
+        try {
+            const data = await authService.register({
+                username: registerUsername,
+                email: registerEmail,
+                password: registerPassword,
+            });
+            setShowRegister(false);
+            setAlert("Usuario registrado con éxito, ahora puedes iniciar sesión");
+        } catch (err) {
+            console.error("Error en register:", err);
+            setError(err.message || "Error en el servidor");
+        }
     };
 
     return (
@@ -74,9 +119,10 @@ export default function LoginPage() {
                             exit={{ y: 100, opacity: 0 }}
                             transition={{ duration: 0.4 }}
                             onSubmit={handleSubmit}
-                            className=" w-full bg-[var(--color-background)] p-6 rounded-lg shadow-md"
+                            className="w-full bg-[var(--color-background)] p-6 rounded-lg shadow-md"
                         >
-                            {error && <p style={{ color: "red" }}>{error}</p>}
+                            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+                            {alert && <p className="text-green-600 text-sm mb-2">{alert}</p>}
 
                             <label htmlFor="email" className="block font-medium mb-1">
                                 Email
@@ -123,8 +169,8 @@ export default function LoginPage() {
                                 <div className="flex items-center space-x-1">
                                     <p className="text-sm text-[var(--color-muted-dark)]">Forgot your </p>
                                     <Link href="/forgot-password">
-                                        <span className="text-md text-[var(--color-info)] hover:underline">
-                                            password?
+                                        <span className="text-sm text-[var(--color-info)] hover:underline">
+                                            Password?
                                         </span>
                                     </Link>
                                 </div>
@@ -150,9 +196,10 @@ export default function LoginPage() {
                             exit={{ y: -100, opacity: 0 }}
                             transition={{ duration: 0.4 }}
                             onSubmit={handleRegisterSubmit}
-                            className=" w-full bg-[var(--color-background)] p-6 rounded-lg shadow-md"
+                            className="w-full bg-[var(--color-background)] p-6 rounded-lg shadow-md"
                         >
-                            {error && <p style={{ color: "red" }}>{error}</p>}
+                            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+                            {alert && <p className="text-green-600 text-sm mb-2">{alert}</p>}
 
                             <label htmlFor="register-username" className="block font-medium mb-1">
                                 Username

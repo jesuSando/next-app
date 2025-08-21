@@ -1,0 +1,14 @@
+.navbar{
+    border-bottom: 2px solid var(--color-text);
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    width: fit-content;
+    background-color: var(--color-primary);
+}
+.button:hover {
+    cursor: pointer;
+    filter: brightness(0.7);
+}
